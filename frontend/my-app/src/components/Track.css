@@ -1,0 +1,30 @@
+
+  .track {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .track_title {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    align-items: center;
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: 1.1rem;
+    padding: var(--spacer);
+    width: var(--track-title-width);
+  }
+
+  .track_notes {
+    display: flex;
+  }
+
+  input[type=range][orient=vertical]
+  {
+      writing-mode: bt-lr; /* IE */
+      -webkit-appearance: slider-vertical; /* Chromium */
+      width: 8px;
+      height: 55px;
+      padding: 0 5px;
+  }

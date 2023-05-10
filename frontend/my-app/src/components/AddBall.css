@@ -1,0 +1,63 @@
+  .buttonAdd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #3b3b3b;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .buttonAdd:hover {
+    background-color: #0062cc;
+  }
+
+  .coordinates {
+    position: fixed;
+    bottom: 300px;
+    right: calc(var(--spacer)*2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .coordinates {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .coordinates .inputs {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .coordinates input {
+    width: 60px;
+    height: 30px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #f1f1f1;
+  }
+
+  
+  .coordinates input[type="number"]::-webkit-inner-spin-button,
+  .coordinates input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  .coordinates input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+

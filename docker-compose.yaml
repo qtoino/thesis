@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+  backend:
+    image: backend_i
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["python3", "server_app.py", "--host=0.0.0.0"]
+    stdin_open: true
+    tty: true
+    ports:
+      - "8000:8000"
+    networks:
+      - mynetwork
+
+  frontend:
+    image: frontend-react-i
+    build: 
+      context: ./frontend/my-app/
+      dockerfile: Dockerfile
+    command: ["npm", "start"]
+    stdin_open: true
+    tty: true
+    ports:
+      - "3000:3000"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+

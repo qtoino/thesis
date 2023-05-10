@@ -1,0 +1,126 @@
+  .filter {
+    position: fixed;
+    bottom: 300px;
+    left: calc(var(--spacer)*3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    background-color: #f1f1f1;
+    cursor: text;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+  }
+  
+  .filter-container:hover {
+    background-color: #e5e5e5;
+  }
+  
+  .filter-input {
+    border: none;
+    outline: none;
+    padding: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #3b3b3b;
+    padding: 5px;
+    background-color: transparent;
+    width: 200px;
+  }
+  
+  .filter-input::placeholder {
+    color: #a7a7a7;
+  }
+  
+  .filterButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .filterButton:hover .filter-icon {
+    fill: #0062cc;
+  }
+  
+  .filter-icon {
+    fill: #3b3b3b;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+
+  .filter-menu {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    width: 100%;
+    padding: 0.5rem 0;
+    background-color: #3b3b3b;
+    border: 1px solid #ccc;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+  }
+
+  .filter-menu-header {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .filter-category {
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .filter-category:hover {
+    background-color: #0062cc;
+  }
+
+  .closeButton {
+    position: absolute;
+    top: 1;
+    right: 0;
+    border: none;
+    background-color: transparent;
+    padding: 3;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .close-icon {
+    fill: #ffffff;
+    width: 10px;
+    height: 10px;
+  }
+
+  .buttonClear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #3b3b3b;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .buttonClear:hover {
+    background-color: #0062cc;
+  }
