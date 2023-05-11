@@ -1,0 +1,6 @@
+backend/audio/.DS_Store
+backend/mydatabase.db
+backend/static/.DS_Store
+backend/__pycache__/
+backend/.DS_Store
+.DS_Store
