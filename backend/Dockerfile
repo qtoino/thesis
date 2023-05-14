@@ -12,8 +12,6 @@ RUN wget -O best_model.pt 'https://drive.google.com/uc?id=1-rF_um4AObZJwEusAPjkB
 # RUN unzip best_model.pt && rm model.zip
 
 WORKDIR /backend/static
-RUN mkdir VENGEANCE
-WORKDIR /backend/static/VENGEANCE
 
 RUN pip install gdown && \
     gdown "https://drive.google.com/uc?id=1tVt-CBoAZyQIM1_cGn1mRlRZHefI5vBJ" -O VENGEWAV.zip && \
