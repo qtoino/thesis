@@ -87,12 +87,12 @@ with open(csv_file, mode='r') as f:
                             print(filename.lower())
 
                             c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                    (filename, x, y, z, radius, color, class_name, "http://0.0.0.0:8000/static/VENGEWAV/", 0))
+                                    (filename, x, y, z, radius, color, class_name, "https://thesis-production-0069.up.railway.app/static/VENGEWAV/", 0))
                             break
                     
                     if not class_name_found:
                         c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                (filename, x, y, z, radius, 'gray', "others", "http://0.0.0.0:8000/static/VENGEWAV/", 0))
+                                (filename, x, y, z, radius, 'gray', "others", "https://thesis-production-0069.up.railway.app/static/VENGEWAV/", 0))
                         
 
 
