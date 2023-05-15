@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y libgomp1 wget unzip
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-WORKDIR backend/audio/model
+WORKDIR /backend/audio/model
 RUN wget -O best_model.pt 'https://drive.google.com/uc?id=1-rF_um4AObZJwEusAPjkBp3aH9EIySB3&export=download'
 # RUN unzip best_model.pt && rm model.zip
 
