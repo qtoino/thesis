@@ -19,6 +19,7 @@ model_s = load_model_s()
 
 generate = GenerativeF(model, model_s)
 
+audio_files_cache = None
 
 @app.route('/input', methods = ["POST"])
 @cross_origin()
@@ -95,66 +96,9 @@ def addnew2():
     # Commit the changes to the database
     conn.commit()
     conn.close()
-    
+
     return jsonify(response)
 
-@app.route('/interpole2', methods = ["POST"])
-@cross_origin()
-def interpol2():
-    
-    data = request.data.decode('utf-8')  # Decode the data to string
-    data_dict = json.loads(data)
-    
-    conn = sqlite3.connect('mydatabase.db')
-    c = conn.cursor()
-
-    c.execute('SELECT name, path FROM audio_files WHERE x=? AND y=? AND z=?', (data_dict["ball1_x"], data_dict["ball1_y"], data_dict["ball1_z"]))
-    audio_file_a = c.fetchone()
-    
-    c.execute('SELECT name, path FROM audio_files WHERE x=? AND y=? AND z=?', (data_dict["ball2_x"], data_dict["ball2_y"], data_dict["ball2_z"]))
-    audio_file_b = c.fetchone()
-    
-    ball_a = np.array([float(data_dict["ball1_x"]), float(data_dict["ball1_y"]), float(data_dict["ball1_z"])])
-    ball_b = np.array([float(data_dict["ball2_x"]), float(data_dict["ball2_y"]), float(data_dict["ball2_z"])])
-    ball_c = np.array([float(data_dict["x"]), float(data_dict["y"]), float(data_dict["z"])])
-
-    dist_a_c = np.linalg.norm(ball_c - ball_a)
-    dist_b_c = np.linalg.norm(ball_c - ball_b)
-    total_distance = dist_a_c + dist_b_c
-
-    influence_a = (dist_b_c / total_distance)
-    influence_b = (dist_a_c / total_distance)
-    
-    print(audio_file_a[0])
-    
-    filepath, generated_number = generate.interpolation(audio_file_a, audio_file_b, influence_a, influence_b)
-    
-    audio_name = filepath.split("/")[-1]
-    
-    # path_to_file = "./audio/generated/" 
-    
-    # # return send_from_directory(path_to_file, audio_name)
-    # with open(f"./static/generated/{audio_name}", "rb") as f:
-    #     audio_data = f.read()
-
-    # # Encode the audio data in Base64
-    # audio_data_base64 = base64.b64encode(audio_data).decode("utf-8")
-
-    # Return a JSON object containing the audio_name and the Base64 encoded audio data
-    response = {
-        "audio_name": audio_name,
-        # "audio_data": audio_data_base64
-    }
-
-    c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/static/generated/", 0))
-   
-    # Commit the changes to the database
-    conn.commit()
-    conn.close()
-    
-    
-    return jsonify(response)
 
 @app.route('/interpole', methods = ["POST"])
 @cross_origin()
@@ -355,18 +299,27 @@ def remove_favorite():
 #         return jsonify({'error': 'Audio file not found'})
 
 # define the route for retrieving  audio file
-@app.route('/all-audio-files', methods=['GET'])
+@app.route('/all-audio-files', methods=['POST'])
 @cross_origin()
 def get_all_audio_files():
-    conn = sqlite3.connect('mydatabase.db')
-    c = conn.cursor()
+    data = request.data.decode('utf-8')  # Decode the data to string
+    data_dict = json.loads(data)
 
-    c.execute('SELECT id, name, color, class, x, y, z, radius, path, favorite FROM audio_files')
-    audio_files = c.fetchall()
-    if audio_files:
+    global audio_files_cache
+    
+    if audio_files_cache is None or data_dict["refresh"] == "True":
+        conn = sqlite3.connect('mydatabase.db')
+        c = conn.cursor()
+
+        c.execute('SELECT id, name, color, class, x, y, z, radius, path, favorite FROM audio_files LIMIT 300')
+        audio_files_cache = c.fetchall()
+
+        conn.close()
+    
+    if audio_files_cache:
         # create a list of dictionaries from the list of tuples
         audio_data = []
-        for audio_file in audio_files:
+        for audio_file in audio_files_cache:
             audio_data.append({
                 'id': audio_file[0],
                 'name': audio_file[1],
@@ -380,11 +333,9 @@ def get_all_audio_files():
                 'favorite': audio_file[9],
             })
         # Close the database connection
-        conn.close()
         return jsonify({'audio_data': audio_data})
     else:
         # Close the database connection
-        conn.close()
         return jsonify({'error': 'Audio file not found'})
 
 @app.route('/delete-generated-sounds', methods=['POST'])
