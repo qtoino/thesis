@@ -298,27 +298,19 @@ def remove_favorite():
 #         return jsonify({'error': 'Audio file not found'})
 
 # define the route for retrieving  audio file
-@app.route('/all-audio-files', methods=['POST'])
+# define the route for retrieving  audio file
+@app.route('/all-audio-files', methods=['GET'])
 @cross_origin()
 def get_all_audio_files():
-    data = request.data.decode('utf-8')  # Decode the data to string
-    data_dict = json.loads(data)
+    conn = sqlite3.connect('mydatabase.db')
+    c = conn.cursor()
 
-    # global audio_files_cache
-    
-    if data_dict["refresh"] == "True":
-        conn = sqlite3.connect('mydatabase.db')
-        c = conn.cursor()
-
-        c.execute('SELECT id, name, color, class, x, y, z, radius, path, favorite FROM audio_files')
-        audio_files_cache = c.fetchall()
-
-        conn.close()
-    
-    if audio_files_cache:
+    c.execute('SELECT id, name, color, class, x, y, z, radius, path, favorite FROM audio_files')
+    audio_files = c.fetchall()
+    if audio_files:
         # create a list of dictionaries from the list of tuples
         audio_data = []
-        for audio_file in audio_files_cache:
+        for audio_file in audio_files:
             audio_data.append({
                 'id': audio_file[0],
                 'name': audio_file[1],
@@ -332,9 +324,11 @@ def get_all_audio_files():
                 'favorite': audio_file[9],
             })
         # Close the database connection
+        conn.close()
         return jsonify({'audio_data': audio_data})
     else:
         # Close the database connection
+        conn.close()
         return jsonify({'error': 'Audio file not found'})
 
 @app.route('/delete-generated-sounds', methods=['POST'])
