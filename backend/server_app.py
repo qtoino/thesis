@@ -376,7 +376,7 @@ def health():
     
 
 if __name__ == "__main__":
-    app.run(host='https://thesis-production-0069.up.railway.app', port=8000)
+    app.run(host='0.0.0.0', port=8000)
     
 
     
