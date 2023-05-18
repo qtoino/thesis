@@ -210,7 +210,6 @@ def interpol2():
     conn.commit()
     conn.close()
     
-    
     return jsonify(response)
 
 @app.route('/addpath', methods = ["POST"])
@@ -307,7 +306,7 @@ def get_all_audio_files():
 
     # global audio_files_cache
     
-    if audio_files_cache is None or data_dict["refresh"] == "True":
+    if data_dict["refresh"] == "True":
         conn = sqlite3.connect('mydatabase.db')
         c = conn.cursor()
 
