@@ -19,7 +19,7 @@ model_s = load_model_s()
 
 generate = GenerativeF(model, model_s)
 
-audio_files_cache = None
+# audio_files_cache = None
 
 @app.route('/input', methods = ["POST"])
 @cross_origin()
@@ -305,13 +305,13 @@ def get_all_audio_files():
     data = request.data.decode('utf-8')  # Decode the data to string
     data_dict = json.loads(data)
 
-    global audio_files_cache
+    # global audio_files_cache
     
     if audio_files_cache is None or data_dict["refresh"] == "True":
         conn = sqlite3.connect('mydatabase.db')
         c = conn.cursor()
 
-        c.execute('SELECT id, name, color, class, x, y, z, radius, path, favorite FROM audio_files LIMIT 300')
+        c.execute('SELECT id, name, color, class, x, y, z, radius, path, favorite FROM audio_files')
         audio_files_cache = c.fetchall()
 
         conn.close()
