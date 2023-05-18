@@ -5,6 +5,7 @@ import json
 import sqlite3
 import base64
 import numpy as np
+import os
 
 from backend import GenerativeF, load_model, load_model_s
 
@@ -91,7 +92,7 @@ def addnew2():
     c = conn.cursor()
 
     c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/static/generated/", 0))
+            (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/audio/generated/", 0))
    
     # Commit the changes to the database
     conn.commit()
@@ -127,7 +128,7 @@ def interpol():
     influence_a = (dist_b_c / total_distance)
     influence_b = (dist_a_c / total_distance)
     
-    print(audio_file_a[0])
+    #print(audio_file_a[0])
     
     filepath, generated_number = generate.interpolation(audio_file_a, audio_file_b, influence_a, influence_b)
     
@@ -191,7 +192,7 @@ def interpol2():
     # path_to_file = "./audio/generated/" 
     
     # # return send_from_directory(path_to_file, audio_name)
-    # with open(f"./static/generated/{audio_name}", "rb") as f:
+    # with open(f"./audio/generated/{audio_name}", "rb") as f:
     #     audio_data = f.read()
 
     # # Encode the audio data in Base64
@@ -204,7 +205,7 @@ def interpol2():
     }
 
     c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/static/generated/", 0))
+            (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/audio/generated/", 0))
    
     # Commit the changes to the database
     conn.commit()
@@ -298,7 +299,6 @@ def remove_favorite():
 #         return jsonify({'error': 'Audio file not found'})
 
 # define the route for retrieving  audio file
-# define the route for retrieving  audio file
 @app.route('/all-audio-files', methods=['GET'])
 @cross_origin()
 def get_all_audio_files():
@@ -336,7 +336,7 @@ def delete_generated_sounds():
     try:
         conn = sqlite3.connect('mydatabase.db')
         c = conn.cursor()
-        c.execute("DELETE FROM audio_files WHERE name LIKE 'GD_%'")
+        c.execute("DELETE FROM audio_files WHERE name LIKE 'GS_%'")
         conn.commit()
         conn.close()
         return jsonify({'status': 'success'})
@@ -367,6 +367,10 @@ def health():
     print("Hello")
     return {"test" : "test"}
     
+
+@app.route('/audio/generated/<path:filename>')
+def custom_static(filename):
+    return send_from_directory(os.path.join(os.path.dirname(__file__), "audio/generated"), filename)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)

@@ -3,7 +3,7 @@ FROM python:3.8.16-slim-buster
 ENV FLASK_APP=server_app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 RUN pip install --upgrade pip
-RUN apt-get update && apt-get install -y libgomp1 wget unzip
+RUN apt-get update && apt-get install -y libgomp1 unzip
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
