@@ -274,7 +274,6 @@ def remove_favorite():
 
     return jsonify({"message": "Audio file removed to favorites successfully"}) 
 
-
 # # define the route for retrieving 1 audio file
 # @app.route('/audio-file', methods=['POST'])
 # @cross_origin()
