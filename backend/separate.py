@@ -35,6 +35,6 @@ def separate_csv_rows(input_file, output_file1, output_file2, threshold):
 input_csv = 'output.csv'
 output_csv_near = 'near_points.csv'
 output_csv_far = 'far_points.csv'
-distance_threshold = 170.0
+distance_threshold = 150.0
 
 separate_csv_rows(input_csv, output_csv_near, output_csv_far, distance_threshold)

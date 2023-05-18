@@ -553,7 +553,7 @@ class GenerativeF():
         wave_audio = wav_sq.cpu().numpy()
         # Set the filename and sampling rate
         self.generated_i += 1
-        filename = './audio/generated/my_generated_sound_'+ str(self.generated_i) + '.wav'
+        filename = './static/generated/GS_'+ str(self.generated_i) + '.wav'
         sampling_rate = 44100 # For example
         wavfile.write(filename, sampling_rate, wave_audio)
         return filename
@@ -590,15 +590,15 @@ class GenerativeF():
         
     def interpolation(self, audio_a, audio_b, influence_a, influence_b):
         
-        if audio_a[0].startswith('my_generated_sound'):
-            mel_a = pppipeline("./audio/generated/"+audio_a[0])
+        if audio_a[0].startswith('GD_'):
+            mel_a = pppipeline("./static/generated/"+audio_a[0])
         else:
             print(audio_a[1])
             mel_a = pppipeline("./static/VENGEWAV/"+audio_a[0])
         mel_a = mel_a.unsqueeze(0)
         
-        if audio_b[0].startswith('my_generated_sound'):
-            mel_b = pppipeline("./audio/generated/"+audio_b[0])
+        if audio_b[0].startswith('GD_'):
+            mel_b = pppipeline("./static/generated/"+audio_b[0])
         else:    
             mel_b = pppipeline("./static/VENGEWAV/"+audio_b[0])
         mel_b = mel_b.unsqueeze(0)

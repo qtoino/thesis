@@ -53,7 +53,7 @@ def addnew():
     
     # return send_from_directory(path_to_file, audio_name)
 
-    with open(f"./audio/generated/{audio_name}", "rb") as f:
+    with open(f"./static/generated/{audio_name}", "rb") as f:
         audio_data = f.read()
 
     # Encode the audio data in Base64
@@ -64,6 +64,96 @@ def addnew():
         "audio_name": audio_name,
         "audio_data": audio_data_base64
     }
+    return jsonify(response)
+
+
+@app.route('/addnew2', methods = ["POST"])
+@cross_origin()
+def addnew2():
+    
+    data = request.data.decode('utf-8')  # Decode the data to string
+    data_dict = json.loads(data)
+
+    filepath, generated_number = generate.coorAsInput(data_dict)
+
+    audio_name = filepath.split("/")[-1]
+
+    # path_to_file = "./audio/generated/" 
+    
+    # return send_from_directory(path_to_file, audio_name)
+
+    response = {
+        "audio_name": audio_name,
+        # "audio_data": audio_data_base64
+    }
+    conn = sqlite3.connect('mydatabase.db')
+    c = conn.cursor()
+
+    c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/static/generated/", 0))
+   
+    # Commit the changes to the database
+    conn.commit()
+    conn.close()
+    
+    return jsonify(response)
+
+@app.route('/interpole2', methods = ["POST"])
+@cross_origin()
+def interpol2():
+    
+    data = request.data.decode('utf-8')  # Decode the data to string
+    data_dict = json.loads(data)
+    
+    conn = sqlite3.connect('mydatabase.db')
+    c = conn.cursor()
+
+    c.execute('SELECT name, path FROM audio_files WHERE x=? AND y=? AND z=?', (data_dict["ball1_x"], data_dict["ball1_y"], data_dict["ball1_z"]))
+    audio_file_a = c.fetchone()
+    
+    c.execute('SELECT name, path FROM audio_files WHERE x=? AND y=? AND z=?', (data_dict["ball2_x"], data_dict["ball2_y"], data_dict["ball2_z"]))
+    audio_file_b = c.fetchone()
+    
+    ball_a = np.array([float(data_dict["ball1_x"]), float(data_dict["ball1_y"]), float(data_dict["ball1_z"])])
+    ball_b = np.array([float(data_dict["ball2_x"]), float(data_dict["ball2_y"]), float(data_dict["ball2_z"])])
+    ball_c = np.array([float(data_dict["x"]), float(data_dict["y"]), float(data_dict["z"])])
+
+    dist_a_c = np.linalg.norm(ball_c - ball_a)
+    dist_b_c = np.linalg.norm(ball_c - ball_b)
+    total_distance = dist_a_c + dist_b_c
+
+    influence_a = (dist_b_c / total_distance)
+    influence_b = (dist_a_c / total_distance)
+    
+    print(audio_file_a[0])
+    
+    filepath, generated_number = generate.interpolation(audio_file_a, audio_file_b, influence_a, influence_b)
+    
+    audio_name = filepath.split("/")[-1]
+    
+    # path_to_file = "./audio/generated/" 
+    
+    # # return send_from_directory(path_to_file, audio_name)
+    # with open(f"./static/generated/{audio_name}", "rb") as f:
+    #     audio_data = f.read()
+
+    # # Encode the audio data in Base64
+    # audio_data_base64 = base64.b64encode(audio_data).decode("utf-8")
+
+    # Return a JSON object containing the audio_name and the Base64 encoded audio data
+    response = {
+        "audio_name": audio_name,
+        # "audio_data": audio_data_base64
+    }
+
+    c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/static/generated/", 0))
+   
+    # Commit the changes to the database
+    conn.commit()
+    conn.close()
+    
+    
     return jsonify(response)
 
 @app.route('/interpole', methods = ["POST"])
@@ -102,7 +192,7 @@ def interpol():
     # path_to_file = "./audio/generated/" 
     
     # return send_from_directory(path_to_file, audio_name)
-    with open(f"./audio/generated/{audio_name}", "rb") as f:
+    with open(f"./static/generated/{audio_name}", "rb") as f:
         audio_data = f.read()
 
     # Encode the audio data in Base64
@@ -114,6 +204,64 @@ def interpol():
         "audio_data": audio_data_base64
     }
 
+    # Commit the changes to the database
+    conn.commit()
+    conn.close()
+    
+    
+    return jsonify(response)
+
+@app.route('/interpole2', methods = ["POST"])
+@cross_origin()
+def interpol2():
+    
+    data = request.data.decode('utf-8')  # Decode the data to string
+    data_dict = json.loads(data)
+    
+    conn = sqlite3.connect('mydatabase.db')
+    c = conn.cursor()
+
+    c.execute('SELECT name, path FROM audio_files WHERE x=? AND y=? AND z=?', (data_dict["ball1_x"], data_dict["ball1_y"], data_dict["ball1_z"]))
+    audio_file_a = c.fetchone()
+    
+    c.execute('SELECT name, path FROM audio_files WHERE x=? AND y=? AND z=?', (data_dict["ball2_x"], data_dict["ball2_y"], data_dict["ball2_z"]))
+    audio_file_b = c.fetchone()
+    
+    ball_a = np.array([float(data_dict["ball1_x"]), float(data_dict["ball1_y"]), float(data_dict["ball1_z"])])
+    ball_b = np.array([float(data_dict["ball2_x"]), float(data_dict["ball2_y"]), float(data_dict["ball2_z"])])
+    ball_c = np.array([float(data_dict["x"]), float(data_dict["y"]), float(data_dict["z"])])
+
+    dist_a_c = np.linalg.norm(ball_c - ball_a)
+    dist_b_c = np.linalg.norm(ball_c - ball_b)
+    total_distance = dist_a_c + dist_b_c
+
+    influence_a = (dist_b_c / total_distance)
+    influence_b = (dist_a_c / total_distance)
+    
+    print(audio_file_a[0])
+    
+    filepath, generated_number = generate.interpolation(audio_file_a, audio_file_b, influence_a, influence_b)
+    
+    audio_name = filepath.split("/")[-1]
+    
+    # path_to_file = "./audio/generated/" 
+    
+    # # return send_from_directory(path_to_file, audio_name)
+    # with open(f"./static/generated/{audio_name}", "rb") as f:
+    #     audio_data = f.read()
+
+    # # Encode the audio data in Base64
+    # audio_data_base64 = base64.b64encode(audio_data).decode("utf-8")
+
+    # Return a JSON object containing the audio_name and the Base64 encoded audio data
+    response = {
+        "audio_name": audio_name,
+        # "audio_data": audio_data_base64
+    }
+
+    c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/static/generated/", 0))
+   
     # Commit the changes to the database
     conn.commit()
     conn.close()
@@ -244,7 +392,7 @@ def delete_generated_sounds():
     try:
         conn = sqlite3.connect('mydatabase.db')
         c = conn.cursor()
-        c.execute("DELETE FROM audio_files WHERE name LIKE 'my_generated_sound%'")
+        c.execute("DELETE FROM audio_files WHERE name LIKE 'GD_%'")
         conn.commit()
         conn.close()
         return jsonify({'status': 'success'})
@@ -277,7 +425,7 @@ def health():
     
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='https://thesis-production-0069.up.railway.app', port=8000)
     
 
     
