@@ -47,7 +47,7 @@ def addnew():
     data = request.data.decode('utf-8')  # Decode the data to string
     data_dict = json.loads(data)
 
-    filepath, generated_number = generate.coorAsInput(data_dict)
+    filepath = generate.coorAsInput(data_dict)
 
     audio_name = filepath.split("/")[-1]
 
@@ -76,7 +76,7 @@ def addnew2():
     data = request.data.decode('utf-8')  # Decode the data to string
     data_dict = json.loads(data)
 
-    filepath, generated_number = generate.coorAsInput(data_dict)
+    filepath = generate.coorAsInput(data_dict)
 
     audio_name = filepath.split("/")[-1]
 
@@ -305,7 +305,7 @@ def get_all_audio_files():
     conn = sqlite3.connect('mydatabase.db')
     c = conn.cursor()
 
-    c.execute('SELECT id, name, color, class, x, y, z, radius, path, favorite FROM audio_files')
+    c.execute('SELECT id, name, color, class, x, y, z, radius, path, favorite FROM audio_files WHERE SUBSTR(name, 1, 2) != "GS"')
     audio_files = c.fetchall()
     if audio_files:
         # create a list of dictionaries from the list of tuples
@@ -368,9 +368,9 @@ def health():
     return {"test" : "test"}
     
 
-@app.route('/audio/generated/<path:filename>')
-def custom_static(filename):
-    return send_from_directory('./audio/generated', filename)
+# @app.route('/audio/generated/<path:filename>')
+# def custom_static(filename):
+#     return send_from_directory('./audio/generated', filename)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
