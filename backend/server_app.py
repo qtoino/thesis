@@ -55,7 +55,7 @@ def addnew():
     
     # return send_from_directory(path_to_file, audio_name)
 
-    with open(f"./static/generated/{audio_name}", "rb") as f:
+    with open(f"./audio/generated/{audio_name}", "rb") as f:
         audio_data = f.read()
 
     # Encode the audio data in Base64
@@ -137,7 +137,7 @@ def interpol():
     # path_to_file = "./audio/generated/" 
     
     # return send_from_directory(path_to_file, audio_name)
-    with open(f"./static/generated/{audio_name}", "rb") as f:
+    with open(f"./audio/generated/{audio_name}", "rb") as f:
         audio_data = f.read()
 
     # Encode the audio data in Base64
@@ -370,7 +370,7 @@ def health():
 
 @app.route('/audio/generated/<path:filename>')
 def custom_static(filename):
-    return send_from_directory(os.path.join(os.path.dirname(__file__), "audio/generated"), filename)
+    return send_from_directory('./audio/generated', filename)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
