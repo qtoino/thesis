@@ -595,16 +595,16 @@ class GenerativeF():
     def interpolation(self, audio_a, audio_b, influence_a, influence_b):
         
         if audio_a[0].startswith('GS_'):
-            mel_a = pppipeline(os.path.join("./audio/generated/", audio_a[0]))
+            mel_a = pppipeline(str(os.path.join("https://thesis-production-0069.up.railway.app/audio/generated/", audio_a[0])))
         else:
             print(audio_a[1])
-            mel_a = pppipeline(os.path.join("./static/VENGEWAV/",audio_a[0]))
+            mel_a = pppipeline(str(os.path.join("https://thesis-production-0069.up.railway.app/static/VENGEWAV/",audio_a[0])))
         mel_a = mel_a.unsqueeze(0)
         
         if audio_b[0].startswith('GS_'):
-            mel_b = pppipeline(os.path.join("./audio/generated/",audio_b[0]))
+            mel_b = pppipeline(str(os.path.join("https://thesis-production-0069.up.railway.app/audio/generated/",audio_b[0])))
         else:    
-            mel_b = pppipeline(os.path.join("./static/VENGEWAV/",audio_b[0]))
+            mel_b = pppipeline(str(os.path.join("https://thesis-production-0069.up.railway.app/static/VENGEWAV/",audio_b[0])))
         mel_b = mel_b.unsqueeze(0)
         
         a_encoded, coon_a = self.vae.encoder(mel_a)
