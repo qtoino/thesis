@@ -555,8 +555,7 @@ class GenerativeF():
         wave_audio = wav_sq.cpu().numpy()
         # Set the filename and sampling rate
         self.generated_i += 1
-        filename = 'https://thesis-production-0069.up.railway.app/audio/generated/GS_'+ str(self.generated_i) + '.wav'
-        
+        filename = f"https://thesis-production-0069.up.railway.app/audio/generated/GS_{str(self.generated_i)}.wav"
         #filename =  os.path.join(os.path.dirname(__file__), "audio/generated", f"GS_{str(self.generated_i)}.wav")
         sampling_rate = 44100 # For example
         wavfile.write(filename, sampling_rate, wave_audio)
@@ -595,16 +594,16 @@ class GenerativeF():
     def interpolation(self, audio_a, audio_b, influence_a, influence_b):
         
         if audio_a[0].startswith('GS_'):
-            mel_a = pppipeline(str(os.path.join("https://thesis-production-0069.up.railway.app/audio/generated/", audio_a[0])))
+            mel_a = pppipeline(str(os.path.join("./audio/generated", audio_a[0])))
         else:
             print(audio_a[1])
-            mel_a = pppipeline(str(os.path.join("https://thesis-production-0069.up.railway.app/static/VENGEWAV/",audio_a[0])))
+            mel_a = pppipeline(str(os.path.join("./static/VENGEWAV/",audio_a[0])))
         mel_a = mel_a.unsqueeze(0)
         
         if audio_b[0].startswith('GS_'):
-            mel_b = pppipeline(str(os.path.join("https://thesis-production-0069.up.railway.app/audio/generated/",audio_b[0])))
+            mel_b = pppipeline(str(os.path.join("./audio/generated/",audio_b[0])))
         else:    
-            mel_b = pppipeline(str(os.path.join("https://thesis-production-0069.up.railway.app/static/VENGEWAV/",audio_b[0])))
+            mel_b = pppipeline(str(os.path.join("./static/VENGEWAV/",audio_b[0])))
         mel_b = mel_b.unsqueeze(0)
         
         a_encoded, coon_a = self.vae.encoder(mel_a)
