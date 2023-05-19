@@ -555,7 +555,7 @@ class GenerativeF():
         wave_audio = wav_sq.cpu().numpy()
         # Set the filename and sampling rate
         self.generated_i += 1
-        filename = f"https://thesis-production-0069.up.railway.app/audio/generated/GS_{str(self.generated_i)}.wav"
+        filename = f"./audio/generated/GS_{str(self.generated_i)}.wav"
         #filename =  os.path.join(os.path.dirname(__file__), "audio/generated", f"GS_{str(self.generated_i)}.wav")
         sampling_rate = 44100 # For example
         wavfile.write(filename, sampling_rate, wave_audio)
