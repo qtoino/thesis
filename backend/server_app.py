@@ -66,6 +66,16 @@ def addnew():
         "audio_name": audio_name,
         "audio_data": audio_data_base64
     }
+    conn = sqlite3.connect('mydatabase.db')
+    c = conn.cursor()
+
+    c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/audio/generated/", 0))
+
+    # Commit the changes to the database
+    conn.commit()
+    conn.close()
+    
     return jsonify(response)
 
 
@@ -98,6 +108,32 @@ def addnew2():
     conn.commit()
     conn.close()
 
+    return jsonify(response)
+
+@app.route('/getURL', methods = ["POST"])
+@cross_origin()
+def getURL():
+    
+    data = request.data.decode('utf-8')  # Decode the data to string
+    data_dict = json.loads(data)
+
+    audio_name = data_dict["sound"]
+
+    # path_to_file = "./audio/generated/" 
+    
+    # return send_from_directory(path_to_file, audio_name)
+
+    with open(f"./audio/generated/{audio_name}", "rb") as f:
+        audio_data = f.read()
+
+    # Encode the audio data in Base64
+    audio_data_base64 = base64.b64encode(audio_data).decode("utf-8")
+
+    # Return a JSON object containing the audio_name and the Base64 encoded audio data
+    response = {
+        "audio_name": audio_name,
+        "audio_data": audio_data_base64
+    }
     return jsonify(response)
 
 
@@ -148,6 +184,9 @@ def interpol():
         "audio_name": audio_name,
         "audio_data": audio_data_base64
     }
+
+    c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/audio/generated/", 0))
 
     # Commit the changes to the database
     conn.commit()
@@ -331,7 +370,28 @@ def get_all_audio_files():
         conn.close()
         return jsonify({'error': 'Audio file not found'})
 
-@app.route('/delete-generated-sounds', methods=['POST'])
+@app.route('/grab-generated-sounds', methods=['GET'])
+def grab_generated_sounds():
+    try:
+        conn = sqlite3.connect('mydatabase.db')
+        c = conn.cursor()
+        c.execute("SELECT name FROM audio_files WHERE name LIKE 'GS_%'")
+        audio_files = c.fetchall()
+        
+        conn.commit()
+        conn.close()
+
+        if audio_files:
+            audio_files_list = [{'name': name[0]} for name in audio_files]
+            return jsonify({'audio_files': audio_files_list})
+        else:
+            return jsonify({'audio_files': "No GS sounds"})
+    except Exception as e:
+        print(e)
+        return jsonify({'status': 'error', 'message': 'An error occurred while deleting generated sounds.'})
+
+
+@app.route('/grab-generated-sounds', methods=['GET'])
 def delete_generated_sounds():
     try:
         conn = sqlite3.connect('mydatabase.db')
@@ -343,6 +403,7 @@ def delete_generated_sounds():
     except Exception as e:
         print(e)
         return jsonify({'status': 'error', 'message': 'An error occurred while deleting generated sounds.'})
+
 
 @app.route('/favorite-audio-files', methods=['GET'])
 @cross_origin()

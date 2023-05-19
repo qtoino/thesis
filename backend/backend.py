@@ -596,7 +596,6 @@ class GenerativeF():
         if audio_a[0].startswith('GS_'):
             mel_a = pppipeline(f"./audio/generated/{audio_a[0]}")
         else:
-            print(audio_a[1])
             mel_a = pppipeline(f"./static/VENGEWAV/{audio_a[0]}")
         mel_a = mel_a.unsqueeze(0)
         
