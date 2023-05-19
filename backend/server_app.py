@@ -305,7 +305,7 @@ def get_all_audio_files():
     conn = sqlite3.connect('mydatabase.db')
     c = conn.cursor()
 
-    c.execute('SELECT id, name, color, class, x, y, z, radius, path, favorite FROM audio_files WHERE SUBSTR(name, 1, 2) != "GS"')
+    c.execute('SELECT id, name, color, class, x, y, z, radius, path, favorite FROM audio_files')
     audio_files = c.fetchall()
     if audio_files:
         # create a list of dictionaries from the list of tuples
