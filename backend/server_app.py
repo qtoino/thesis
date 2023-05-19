@@ -368,9 +368,9 @@ def health():
     return {"test" : "test"}
     
 
-# @app.route('/audio/generated/<path:filename>')
-# def custom_static(filename):
-#     return send_from_directory('./audio/generated', filename)
+@app.route('/audio/generated/<path:filename>')
+def custom_static(filename):
+    return send_from_directory('./audio/generated', filename)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
