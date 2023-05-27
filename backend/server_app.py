@@ -7,8 +7,56 @@ import base64
 import numpy as np
 import os
 import pandas as pd
+import csv
+import random
 
 from backend import GenerativeF, load_model, load_model_s
+
+
+def get_first_200_sounds():
+    sound_files = []
+    i = 0
+    # Read the CSV file to exclude the first line
+    with open('output.csv', 'r') as file:
+        csv_reader = csv.reader(file)
+        next(csv_reader)  # Skip the first line
+
+        for row in csv_reader:
+            if i == 0:
+                term = row
+            else:
+                sound_files.append(row)  # Concatenate the term with the sound file
+            i += 1
+
+    # Randomly shuffle the list of sound files
+    random.shuffle(sound_files)
+
+    # Get the first 200 sound files
+    first_200_sounds = sound_files[:200]
+    term+first_200_sounds
+    print(term+first_200_sounds)
+    return first_200_sounds
+
+class_color_map = {
+      'bongo': "#9c27b0",
+      'claps': "#fd5b78",
+      'clicks': "#ff6037",
+      'crash': "#ffff66",
+      'favorites': "favorites",
+      'fx': "#ff00cc",
+      'generated': "red",
+      'hihat': "#ff9966",
+      'kick': "#ccff00",
+      'others': "gray",
+      'perc': "#ff9933",
+      'percussive': "#ffcc33",
+      'rides': "#66ff66",
+      'shaker': "#aaf0d1",
+      'snares': "#ff355e",
+      'synth': "#16d0cb",
+      'tom': "#50bfe6",
+      'tribal': "#ee34d2"
+}
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -43,14 +91,86 @@ def input():
 
 
 
-@app.route('/input', methods = ["POST"])
+@app.route('/random-sounds', methods = ["GET"])
 @cross_origin()
-def input():
+def randomSound():
+
+    conn = sqlite3.connect('mydatabase.db')
+
+    c = conn.cursor()
+
+    c.execute("""DROP TABLE IF EXISTS audio_files;""")
+
+    c.execute("""CREATE TABLE audio_files (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                color TEXT,
+                class TEXT,
+                x FLOAT,
+                y FLOAT,
+                z FLOAT,
+                radius INTEGER,
+                path TEXT,
+                favorite INTEGER
+                )""")
     
+
+    first_200_sounds = get_first_200_sounds()  # Retrieve the first 200 sounds
     
-    data = request.data.decode('utf-8')  # Decode the data to string
-    data_dict = json.loads(data)
-    print(data_dict)
+    for row in first_200_sounds:
+
+        # Extract the data from the row
+        try:
+            x = float(row[0])
+            y = float(row[1])
+            z = float(row[2])
+        except:
+            x = "null"
+        radius = row[3]
+        color = row[4]
+        filename = row[5].replace('&', '_')
+
+        # Check if the file is an audio file (e.g. mp3, wav, etc.)
+        if filename.endswith('.mp3') or filename.endswith('.wav'):
+            # # Do something with the data (e.g. process the audio file)
+            # with open(os.path.join(dir_path, filename), 'rb') as audio_file:
+            #     audio_data = audio_file.read()
+                # Insert the audio file data into the "audio_files" table
+                
+            if x == "null":
+                c.execute("INSERT INTO audio_files (name, path) VALUES (?, ?)",
+                        (filename, "./audio/VENGEWAV/"))
+            else:
+                # Check if the audio file already exists in the database
+                c.execute("SELECT * FROM audio_files WHERE name = ?", (filename,))
+                if c.fetchone() is None:
+                    class_name_found = False
+                    for class_name, class_color in class_color_map.items():
+                        if class_name in filename.lower():
+                            color = class_color
+                            class_name_found = True
+                            print(filename.lower())
+
+                            c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                    (filename, x, y, z, radius, color, class_name, "https://thesis-production-0069.up.railway.app/static/VENGEWAV/", 0))
+                            break
+                    
+                    if not class_name_found:
+                        c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                (filename, x, y, z, radius, 'gray', "others", "https://thesis-production-0069.up.railway.app/static/VENGEWAV/", 0))
+                            
+
+
+
+    # Commit the changes to the database
+    conn.commit()
+
+    # Close the database connection
+    conn.close()
+
+    return jsonify({'audio_data': first_200_sounds})
+
+
     # x = torch.randn((1, 1, 128, 512))
     # ret, generated_i = generate.audioAsInput(x)
         
@@ -71,7 +191,7 @@ def addnew():
     data = request.data.decode('utf-8')  # Decode the data to string
     data_dict = json.loads(data)
 
-    data_dict_coor = [[data_dict["x"]/100, data_dict["y"]/100, data_dict["z"]/100]]
+    data_dict_coor = data_dict #[[data_dict["x"]/100, data_dict["y"]/100, data_dict["z"]/100]]
 
     filepath = generate.coorAsInput(data_dict)
 
@@ -96,7 +216,7 @@ def addnew():
     c = conn.cursor()
 
     c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/audio/generated/", 0))
+        (audio_name, data_dict_coor["x"], data_dict_coor["y"], data_dict_coor["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/audio/generated/", 0))
 
     # Commit the changes to the database
     conn.commit()
@@ -395,6 +515,7 @@ def get_all_audio_files():
         # Close the database connection
         conn.close()
         return jsonify({'error': 'Audio file not found'})
+        
 
 @app.route('/grab-generated-sounds', methods=['GET'])
 def grab_generated_sounds():
@@ -461,6 +582,4 @@ def custom_static(filename):
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
-    
-
     
