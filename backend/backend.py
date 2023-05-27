@@ -585,8 +585,8 @@ class GenerativeF():
 
     def coorAsInput(self, coor):
         
-        input = [[coor["x"], coor["y"], coor["z"]]]
-
+        input = [[coor["x"]/100, coor["y"]/100, coor["z"]/100]]
+        print(torch.tensor(input))
         x = self.model_s.decode(torch.tensor(input).to(device))
 
         return self.latentAsInput(x)

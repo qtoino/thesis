@@ -48,7 +48,7 @@ def addnew():
     data_dict = json.loads(data)
 
     data_dict_coor = data_dict #[[data_dict["x"]/100, data_dict["y"]/100, data_dict["z"]/100]]
-    print(data_dict_coor)
+
     filepath = generate.coorAsInput(data_dict)
 
     audio_name = filepath.split("/")[-1]
