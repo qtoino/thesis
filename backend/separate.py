@@ -1,24 +1,32 @@
 import csv
 from math import sqrt
+import random
 
 def distance_to_origin(x, y, z):
     return sqrt(x ** 2 + y ** 2 + z ** 2)
 
 def separate_csv_rows(input_file, output_file1, output_file2, threshold):
     with open(input_file, newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
+        reader = list(csv.reader(csvfile, delimiter=','))  # Convert reader to a list
+        random.shuffle(reader)
+
 
         near_rows = []
         far_rows = []
+        near_count = 0  # Track the number of balls in the near_rows list
 
-        for row in reader:
+        for row in reader:  # Iterate over a random sample of the shuffled list
             try:
                 x, y, z, radius, color, sound = float(row[0]), float(row[1]), float(row[2]), float(row[3]), row[4], row[5]
                 distance = distance_to_origin(x, y, z)
 
                 if distance < threshold:
-                    near_rows.append(row)
+                    if near_count < 300:  # Check if the near_rows count is less than 300
+                        near_rows.append(row)
+                        near_count += 1
                 else:
+                    if near_count < 200:  # Check if the near_rows count is less than 300
+                        near_rows.append(row)
                     far_rows.append(row)
             except:
                 near_rows.append(row)
