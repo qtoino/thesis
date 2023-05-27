@@ -541,7 +541,7 @@ class GenerativeF():
         coor = [z[0]*100, z[1]*100, z[2]*100]
         return coor
 
-    def spec2audio(self, img_recon):
+    def spec2audio(self, img_recon, prefix):
 
         # Instantiate a pipeline
         rpipeline = Mel2Audio(SAMPLE_RATE, n_fft, n_mel, normalize_dataset_db)
@@ -555,7 +555,7 @@ class GenerativeF():
         wave_audio = wav_sq.cpu().numpy()
         # Set the filename and sampling rate
         self.generated_i += 1
-        filename = f"./audio/generated/GS_{str(self.generated_i)}.wav"
+        filename = f"./audio/generated/{prefix}_{str(self.generated_i)}.wav"
         #filename =  os.path.join(os.path.dirname(__file__), "audio/generated", f"GS_{str(self.generated_i)}.wav")
         sampling_rate = 44100 # For example
         wavfile.write(filename, sampling_rate, wave_audio)
@@ -570,7 +570,7 @@ class GenerativeF():
 
         # show_spec_batch(img_recon, SAMPLE_RATE, -1)
 
-        filename = self.spec2audio(img_recon)
+        filename = self.spec2audio(img_recon, "MIC")
         
         return filename, self.generated_i
 
@@ -580,7 +580,7 @@ class GenerativeF():
         img_recon = self.vae.decoder(x, "none")
         #print(img_recon.shape)
 
-        return self.spec2audio(img_recon)
+        return self.spec2audio(img_recon, "AB")
 
 
     def coorAsInput(self, coor):
@@ -593,14 +593,18 @@ class GenerativeF():
         
     def interpolation(self, audio_a, audio_b, influence_a, influence_b):
         
-        if audio_a[0].startswith('GS_'):
+        if audio_a[0].startswith('INT_'):
+            mel_a = pppipeline(f"./audio/generated/{audio_a[0]}")
+        elif audio_a[0].startswith('AB_'):
             mel_a = pppipeline(f"./audio/generated/{audio_a[0]}")
         else:
             mel_a = pppipeline(f"./static/VENGEWAV/{audio_a[0]}")
         mel_a = mel_a.unsqueeze(0)
         
-        if audio_b[0].startswith('GS_'):
+        if audio_b[0].startswith('INT_'):
             mel_b = pppipeline(f"./audio/generated/{audio_b[0]}")
+        elif audio_b[0].startswith('AB_'):
+            mel_a = pppipeline(f"./audio/generated/{audio_b[0]}")
         else:    
             mel_b = pppipeline(f"./static/VENGEWAV/{audio_b[0]}")
         mel_b = mel_b.unsqueeze(0)
@@ -612,7 +616,7 @@ class GenerativeF():
         
         img_recon = self.vae.decoder(conv_comb, coon_a)
         
-        filename = self.spec2audio(img_recon)
+        filename = self.spec2audio(img_recon, "INT")
         
         return filename, self.generated_i
         

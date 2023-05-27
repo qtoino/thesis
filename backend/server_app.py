@@ -48,7 +48,7 @@ def addnew():
     data_dict = json.loads(data)
 
     data_dict_coor = data_dict #[[data_dict["x"]/100, data_dict["y"]/100, data_dict["z"]/100]]
-
+    print(data_dict_coor)
     filepath = generate.coorAsInput(data_dict)
 
     audio_name = filepath.split("/")[-1]
@@ -377,7 +377,7 @@ def grab_generated_sounds():
     try:
         conn = sqlite3.connect('mydatabase.db')
         c = conn.cursor()
-        c.execute("SELECT name FROM audio_files WHERE name LIKE 'GS_%'")
+        c.execute("SELECT name FROM audio_files WHERE name LIKE 'INT_%' OR name LIKE 'AB_%'")
         audio_files = c.fetchall()
         
         conn.commit()
@@ -387,18 +387,18 @@ def grab_generated_sounds():
             audio_files_list = [{'name': name[0]} for name in audio_files]
             return jsonify({'audio_files': audio_files_list})
         else:
-            return jsonify({'audio_files': "No GS sounds"})
+            return jsonify({'audio_files': "No INT or AB sounds"})
     except Exception as e:
         print(e)
-        return jsonify({'status': 'error', 'message': 'An error occurred while deleting generated sounds.'})
+        return jsonify({'status': 'error', 'message': 'An error occurred while retrieving generated sounds.'})
 
 
-@app.route('/grab-generated-sounds', methods=['GET'])
+@app.route('/delete-generated-sounds', methods=['GET'])
 def delete_generated_sounds():
     try:
         conn = sqlite3.connect('mydatabase.db')
         c = conn.cursor()
-        c.execute("DELETE FROM audio_files WHERE name LIKE 'GS_%'")
+        c.execute("DELETE FROM audio_files WHERE name LIKE 'LIKE 'INT_%' OR name LIKE 'AB_%'")
         conn.commit()
         conn.close()
         return jsonify({'status': 'success'})
