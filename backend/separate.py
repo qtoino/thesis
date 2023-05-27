@@ -8,24 +8,24 @@ def distance_to_origin(x, y, z):
 def separate_csv_rows(input_file, output_file1, output_file2, threshold):
     with open(input_file, newline='') as csvfile:
         reader = list(csv.reader(csvfile, delimiter=','))  # Convert reader to a list
-        random.shuffle(reader)
+        header = reader[0]  # Store the header row
 
+        random.shuffle(reader[1:])  # Shuffle the list of rows except the header
 
-        near_rows = []
-        far_rows = []
-        near_count = 0  # Track the number of balls in the near_rows list
+        near_rows = [header]  # Add the header row to near_rows
+        far_rows = [header]  # Add the header row to far_rows
 
-        for row in reader:  # Iterate over a random sample of the shuffled list
+        for row in reader[1:]:
             try:
                 x, y, z, radius, color, sound = float(row[0]), float(row[1]), float(row[2]), float(row[3]), row[4], row[5]
                 distance = distance_to_origin(x, y, z)
 
                 if distance < threshold:
-                    if near_count < 300:  # Check if the near_rows count is less than 300
+                    if near_count < 200:  # Check if the near_rows count is less than 300
                         near_rows.append(row)
                         near_count += 1
                 else:
-                    if near_count < 200:  # Check if the near_rows count is less than 300
+                    if near_count < 50:  # Check if the near_rows count is less than 300
                         near_rows.append(row)
                     far_rows.append(row)
             except:
