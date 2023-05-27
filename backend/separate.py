@@ -25,9 +25,6 @@ def separate_csv_rows(input_file, output_file1, output_file2, threshold):
                         near_rows.append(row)
                         near_count += 1
                 else:
-                    if near_count < 50:  # Check if the near_rows count is less than 300
-                        near_rows.append(row)
-                        near_count += 1
                     far_rows.append(row)
             except:
                 near_rows.append(row)
