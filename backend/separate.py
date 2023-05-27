@@ -1,11 +1,16 @@
 import csv
 from math import sqrt
 import random
+import pandas as pd
 
 def distance_to_origin(x, y, z):
     return sqrt(x ** 2 + y ** 2 + z ** 2)
 
 def separate_csv_rows(input_file, output_file1, output_file2, threshold):
+
+    df = pd.read_csv(input_file, header=1)
+    df.sample
+    df.to_csv(input_file)
     with open(input_file, newline='') as csvfile:
         reader = list(csv.reader(csvfile, delimiter=','))  # Convert reader to a list
         header = reader[0]  # Store the header row

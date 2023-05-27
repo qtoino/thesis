@@ -6,6 +6,7 @@ import sqlite3
 import base64
 import numpy as np
 import os
+import pandas as pd
 
 from backend import GenerativeF, load_model, load_model_s
 
@@ -39,6 +40,31 @@ def input():
 
     # print(response_data)    
     return jsonify({"message": "Success"})
+
+
+
+@app.route('/input', methods = ["POST"])
+@cross_origin()
+def input():
+    
+    df = pd.read_csv('output.csv', header=1)
+    df.sample
+    df.to_csv('output.csv')
+    data = request.data.decode('utf-8')  # Decode the data to string
+    data_dict = json.loads(data)
+    print(data_dict)
+    # x = torch.randn((1, 1, 128, 512))
+    # ret, generated_i = generate.audioAsInput(x)
+        
+    # try:
+    #     response_data = jsonify({"audio_file": ret, "color": "red"})
+    # except:
+    #     abort(400)
+
+    # print(response_data)    
+    return jsonify({"message": "Success"})
+
+    
 
 @app.route('/addnew', methods = ["POST"])
 @cross_origin()
