@@ -47,6 +47,8 @@ def addnew():
     data = request.data.decode('utf-8')  # Decode the data to string
     data_dict = json.loads(data)
 
+    data_dict_coor = data_dict #[[data_dict["x"]/100, data_dict["y"]/100, data_dict["z"]/100]]
+
     filepath = generate.coorAsInput(data_dict)
 
     audio_name = filepath.split("/")[-1]
@@ -70,7 +72,7 @@ def addnew():
     c = conn.cursor()
 
     c.execute("INSERT INTO audio_files (name, x, y, z, radius, color, class, path, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (audio_name, data_dict["x"], data_dict["y"], data_dict["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/audio/generated/", 0))
+        (audio_name, data_dict_coor["x"], data_dict_coor["y"], data_dict_coor["z"], 1, 'red', 'generated', "https://thesis-production-0069.up.railway.app/audio/generated/", 0))
 
     # Commit the changes to the database
     conn.commit()

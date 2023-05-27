@@ -14,7 +14,7 @@ def separate_csv_rows(input_file, output_file1, output_file2, threshold):
 
         near_rows = [header]  # Add the header row to near_rows
         far_rows = [header]  # Add the header row to far_rows
-
+        near_count = 0
         for row in reader[1:]:
             try:
                 x, y, z, radius, color, sound = float(row[0]), float(row[1]), float(row[2]), float(row[3]), row[4], row[5]
