@@ -23,7 +23,7 @@ RUN gdown "https://drive.google.com/uc?id=1tVt-CBoAZyQIM1_cGn1mRlRZHefI5vBJ" -O 
 EXPOSE 8000
 COPY . .
 
-RUN ["python", "separate.py"]
+# RUN ["python", "separate.py"]
 
 RUN ["python", "startDB.py"]
 
