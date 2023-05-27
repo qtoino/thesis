@@ -168,19 +168,7 @@ def randomSound():
     # Close the database connection
     conn.close()
 
-    return jsonify({'audio_data': first_200_sounds})
-
-
-    # x = torch.randn((1, 1, 128, 512))
-    # ret, generated_i = generate.audioAsInput(x)
-        
-    # try:
-    #     response_data = jsonify({"audio_file": ret, "color": "red"})
-    # except:
-    #     abort(400)
-
-    # print(response_data)    
-    return jsonify({"message": "Success"})
+    return jsonify({'status': "success"})
 
     
 
@@ -544,13 +532,17 @@ def delete_generated_sounds():
         conn = sqlite3.connect('mydatabase.db')
         c = conn.cursor()
         c.execute("DELETE FROM audio_files WHERE name LIKE 'INT_%' OR name LIKE 'AB_%'")
+        rows_deleted = c.rowcount  # Get the number of rows deleted
         conn.commit()
         conn.close()
-        return jsonify({'status': 'success'})
+
+        if rows_deleted > 0:
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'status': 'nothing'})
     except Exception as e:
         print(e)
         return jsonify({'status': 'error', 'message': 'An error occurred while deleting generated sounds.'})
-
 
 @app.route('/favorite-audio-files', methods=['GET'])
 @cross_origin()
