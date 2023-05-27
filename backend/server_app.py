@@ -543,7 +543,7 @@ def delete_generated_sounds():
     try:
         conn = sqlite3.connect('mydatabase.db')
         c = conn.cursor()
-        c.execute("DELETE FROM audio_files WHERE name LIKE 'LIKE 'INT_%' OR name LIKE 'AB_%'")
+        c.execute("DELETE FROM audio_files WHERE name LIKE 'INT_%' OR name LIKE 'AB_%'")
         conn.commit()
         conn.close()
         return jsonify({'status': 'success'})
