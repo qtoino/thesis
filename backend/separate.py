@@ -8,9 +8,22 @@ def distance_to_origin(x, y, z):
 
 def separate_csv_rows(input_file, output_file1, output_file2, threshold):
 
-    df = pd.read_csv(input_file, header=1)
-    df.sample
-    df.to_csv(input_file)
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(input_file)
+
+    # Get the first row and the remaining rows
+    first_row = df.iloc[[0]]
+    remaining_rows = df.iloc[1:]
+
+    # Randomly sample the remaining rows
+    randomized_rows = remaining_rows.sample(frac=1)
+
+    # Concatenate the first row with the randomized rows
+    randomized_df = pd.concat([first_row, randomized_rows])
+
+    # Write the randomized DataFrame back to the CSV file
+    randomized_df.to_csv(input_file, index=False)
+
     with open(input_file, newline='') as csvfile:
         reader = list(csv.reader(csvfile, delimiter=','))  # Convert reader to a list
         header = reader[0]  # Store the header row
